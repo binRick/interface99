@@ -52,10 +52,10 @@ char * hostname_to_ip(char *hostname){
   return("");
 }
 
-#define RH_IFACE \
+#define AbducoHost_IFACE \
   vfunc(void, exec, VSelf, char *cmd)
 
-interface(RH);
+interface(AbducoHost);
 
 typedef struct {
   char *cmd;
@@ -70,6 +70,10 @@ typedef struct {
 } Connection;
 
 typedef struct {
+  char *name;
+} AbducoHost;
+
+typedef struct {
   char       *name;
   bool       ok;
   Connection conn;
@@ -77,17 +81,18 @@ typedef struct {
 
 
 void RemoteHost_exec(VSelf, char *cmd) {
-  VSELF(RemoteHost);
-  log_debug("[exec] <%s> Running cmd '%s'", self->name, cmd);
+  VSELF(AbducoHost);
+  log_debug("remotehost [exec] <%s> Running cmd '%s'", self->name, cmd);
 }
+
+impl(AbducoHost, RemoteHost);
+
 
 /*
  * void RemoteHost_list(VSelf, char *cmd) {
  * VSELF(RemoteHost);
  * log_debug("[list] <%s> Running cmd '%s'", self->name, cmd);
  * }*/
-
-impl(RH, RemoteHost);
 
 
 Connection NewConnection(char *host, int port){
@@ -147,9 +152,10 @@ void dev1(){
 
 
 void dev2(){
-  RH web1 = DYN(
-    RemoteHost, RH, &(RemoteHost){ .name = "web1.vpnservice.company" }
-    );
+  AbducoHost web1 = DYN(
+    RemoteHost, AbducoHost, &(RemoteHost){
+    .name = "web1.vpnservice.company"
+  });
 
   VCALL(web1, exec, "pwd");
 }

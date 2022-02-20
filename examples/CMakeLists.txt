@@ -23,6 +23,7 @@ add_executable(airplane airplane.c)
 add_executable(read_write read_write.c)
 add_executable(read_write_both read_write_both.c)
 add_executable(marker marker.c)
+add_executable(richard richard.c)
 add_executable(default_impl default_impl.c)
 
 add_subdirectory(.. build)

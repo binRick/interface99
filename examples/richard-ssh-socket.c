@@ -1,6 +1,7 @@
 #ifndef RICHARD_SS
 #define RICHARD_SS
 
+
 socket99_config SshClientConfig(RemoteHost *rh){
   socket99_config cfg = {
     .host        = hostname_to_ip(rh->name),

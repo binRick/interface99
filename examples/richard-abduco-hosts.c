@@ -1,10 +1,6 @@
 
 /*  HOSTS */
 
-typedef struct {
-  char dummy;
-} w1, w2, w3;
-
 
 /*  HOST FXNS */
 bool w_ok(void) {
@@ -64,6 +60,9 @@ void w2_connect(AbducoHost ah) {
 #define w2_port_CUSTOM       ()
 #define w3_port_CUSTOM       ()
 
+typedef struct {
+  char dummy;
+} w1, w2, w3;
 impl(AbducoHost, w1);
 impl(AbducoHost, w2);
 impl(AbducoHost, w3);

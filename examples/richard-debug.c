@@ -2,7 +2,6 @@
 #define RICHARD_DEBUG
 
 
-
 int PrintRemoteHost(RemoteHost rh){
   int fd = SshConfigOpen(&rh);
 

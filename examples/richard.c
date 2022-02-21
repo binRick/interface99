@@ -1,4 +1,6 @@
-
+#ifndef RICHARD_C
+#define RICHARD_C
+#define SSH_PORT    22
 #include "richard-utils.c"
 #include <arpa/inet.h>
 #include <errno.h>  //For errno - the error number
@@ -13,9 +15,7 @@
 #include <stddef.h>
 
 
-#ifndef LF
 #define TEST_LOG_FILE    "/tmp/vshell.log"
-#define LF               1
 
 
 void  log_file_test(){
@@ -71,25 +71,56 @@ typedef struct {
 //} AbducoHost;
 
 typedef struct {
-  char       *name;
-  bool       ok;
-  Connection conn;
+  char            *name;
+  int             ssh_port;
+  bool            ok;
+  Connection      conn;
+  socket99_config cfg;
 } RemoteHost;
 
 
-//void RemoteHost_exec(VSelf, char *cmd) {
-//  VSELF(AbducoHost);
-//  log_debug("remotehost [exec] <%s> Running cmd '%s'", self->name, cmd);
-//}
+socket99_config SshSocket(const RemoteHost *rh){
+  socket99_config cfg = {
+    .host        = hostname_to_ip(rh->name),
+    .port        = rh->ssh_port,
+    .server      = false,
+    .nonblocking = true,
+  };
 
-///impl(AbducoHost, RemoteHost);
+  return(cfg);
+}
 
 
-/*
- * void RemoteHost_list(VSelf, char *cmd) {
- * VSELF(RemoteHost);
- * log_debug("[list] <%s> Running cmd '%s'", self->name, cmd);
- * }*/
+int SshConfigOpen(const RemoteHost *rh){
+  socket99_result ssh;
+  bool            ok = socket99_open(&(rh->cfg), &ssh);
+
+  if (ok && ssh.fd > 0) {
+    return(ssh.fd);
+  }
+
+  return(-1);
+}
+
+
+bool SshConfigOk(const RemoteHost *rh){
+  socket99_result ssh;
+  bool            ok          = socket99_open(&(rh->cfg), &ssh);
+  bool            send_packet = false;
+
+  if (ok) {
+    if (send_packet) {
+      const char *msg     = "hello\n";
+      size_t     msg_size = strlen(msg);
+      ssize_t    sent     = send(ssh.fd, msg, msg_size, 0);
+      bool       pass     = ((size_t)sent == msg_size);
+      log_debug("sent %zu bytes!", sent);
+    }
+    close(ssh.fd);
+    log_debug("ssh conn closed!");
+  }
+  return(ok);
+}
 
 
 Connection NewConnection(char *host, int port){
@@ -108,12 +139,20 @@ Connection NewConnection(char *host, int port){
 
 
 int PrintRemoteHost(const RemoteHost rh){
-  log_info(""
-           "name: %s"
-           "|conn:%s:%d|ok?%s|",
+  int fd = SshConfigOpen(&rh);
+
+  close(fd);
+
+  log_info("\n"
+           "name: %s\n"
+           "      - cfg:      %s:%d\n"
+           "      - ok?       %s\n"
+           "      - fd:       %d\n"
+           "",
            rh.name,
-           rh.conn.host, rh.conn.port,
-           (rh.conn.ok ? "Yes" : "No")
+           rh.cfg.host, rh.cfg.port,
+           SshConfigOk(&rh) ? "Yes" : "No",
+           fd
            );
 }
 
@@ -126,50 +165,35 @@ RemoteHost NewRemoteHost(char *name, int port){
     name = "UNKNOWN";
   }
 
-
-  RemoteHost rh = {
-    .name = name,
-    .conn = NULL,
-    //NewConnection(hostname_to_ip(name),port),
-    .ok   = false
+  RemoteHost      rh = {
+    .name     = name,
+    .conn     = NULL,
+    .cfg      = NULL,
+    .ok       = false,
+    .ssh_port = SSH_PORT
   };
+  socket99_config cfg = SshSocket(&rh);
+
+  rh.cfg = SshSocket(&rh);
 
   return(rh);
 }
 
 
 void dev1(){
-  RemoteHost web1 = NewRemoteHost("web1.vpnservice.company", 22);
+  RemoteHost web1 = NewRemoteHost("web1.vpnservice.company", SSH_PORT);
 
   PrintRemoteHost(web1);
 
-  RemoteHost web2 = NewRemoteHost("web1.vpntech.net", 0);
-
-  PrintRemoteHost(web2);
-}
-
-
-void dev2(){
-/*
- * AbducoHost web1 = DYN(
- *  RemoteHost, AbducoHost, &(RemoteHost){
- *  .name = "web1.vpnservice.company"
- * });
- *
- * VCALL(web1, exec, "pwd");
- */
-}
-
-
-void dev3(){
-//  VCALL(web1, exec, "pwd");
+  if (false) {
+    RemoteHost web2 = NewRemoteHost("web1.vpntech.net", 0);
+    PrintRemoteHost(web2);
+  }
 }
 
 
 int main(void) {
   log_set_level(LOG_TRACE);
 
-
   dev1();
-  //dev2();
 }

@@ -1,5 +1,6 @@
 #ifndef RICHARD_H
 #define RICHARD_H
+#include "ansicodes.h"
 #include <time.h>
 
 #include "../../bash-loadable-wireguard/src/fs/file2str.c"
@@ -49,6 +50,9 @@ int RunActionName(char *name, const int argc, const char **argv){
   log_error("Failed to find function for name '%s'", name);
   return(-1);
 }
+
+
+//RunActionName("list", argc, argv);
 
 
 int test_abduco_host_socket(){

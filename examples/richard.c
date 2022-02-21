@@ -1,4 +1,5 @@
 
+#include "richard-utils.c"
 #include <arpa/inet.h>
 #include <errno.h>  //For errno - the error number
 #include <interface99.h>
@@ -11,10 +12,6 @@
 #include <assert.h>
 #include <stddef.h>
 
-
-#include "../../bash-loadable-wireguard/src/fs/file2str.c"
-#include "../../bash-loadable-wireguard/src/human/bytes.c"
-#include "../../bash-loadable-wireguard/src/log/log.c"
 
 #ifndef LF
 #define TEST_LOG_FILE    "/tmp/vshell.log"
@@ -52,10 +49,10 @@ char * hostname_to_ip(char *hostname){
   return("");
 }
 
-#define AbducoHost_IFACE \
-  vfunc(void, exec, VSelf, char *cmd)
+//#define AbducoHost_IFACE \
+//  vfunc(void, exec, VSelf, char *cmd)
 
-interface(AbducoHost);
+//interface(AbducoHost);
 
 typedef struct {
   char *cmd;
@@ -69,9 +66,9 @@ typedef struct {
   bool ok;
 } Connection;
 
-typedef struct {
-  char *name;
-} AbducoHost;
+//typedef struct {
+//  char *name;
+//} AbducoHost;
 
 typedef struct {
   char       *name;
@@ -80,12 +77,12 @@ typedef struct {
 } RemoteHost;
 
 
-void RemoteHost_exec(VSelf, char *cmd) {
-  VSELF(AbducoHost);
-  log_debug("remotehost [exec] <%s> Running cmd '%s'", self->name, cmd);
-}
+//void RemoteHost_exec(VSelf, char *cmd) {
+//  VSELF(AbducoHost);
+//  log_debug("remotehost [exec] <%s> Running cmd '%s'", self->name, cmd);
+//}
 
-impl(AbducoHost, RemoteHost);
+///impl(AbducoHost, RemoteHost);
 
 
 /*
@@ -98,7 +95,7 @@ impl(AbducoHost, RemoteHost);
 Connection NewConnection(char *host, int port){
   Connection conn = {
     .host = (host != NULL) ? host : "UNKNOWN",
-    .port = (port != NULL && port > 1 && port < 65535) ? port : 22,
+    .port = (port != 0 && port > 1 && port < 65535) ? port : 22,
     .ok   = false
   };
 
@@ -125,14 +122,15 @@ RemoteHost NewRemoteHost(char *name, int port){
   char ip[100];
   char *host = "UNKNOWN";
 
-  if (name == NULL || name == "") {
+  if (strcmp(name, "") == 0) {
     name = "UNKNOWN";
   }
 
 
   RemoteHost rh = {
     .name = name,
-    .conn = NewConnection(hostname_to_ip(name),port),
+    .conn = NULL,
+    //NewConnection(hostname_to_ip(name),port),
     .ok   = false
   };
 
@@ -145,19 +143,21 @@ void dev1(){
 
   PrintRemoteHost(web1);
 
-  RemoteHost web2 = NewRemoteHost("web1.vpntech.net", NULL);
+  RemoteHost web2 = NewRemoteHost("web1.vpntech.net", 0);
 
   PrintRemoteHost(web2);
 }
 
 
 void dev2(){
-  AbducoHost web1 = DYN(
-    RemoteHost, AbducoHost, &(RemoteHost){
-    .name = "web1.vpnservice.company"
-  });
-
-  VCALL(web1, exec, "pwd");
+/*
+ * AbducoHost web1 = DYN(
+ *  RemoteHost, AbducoHost, &(RemoteHost){
+ *  .name = "web1.vpnservice.company"
+ * });
+ *
+ * VCALL(web1, exec, "pwd");
+ */
 }
 
 
@@ -170,6 +170,6 @@ int main(void) {
   log_set_level(LOG_TRACE);
 
 
-  //dev1();
-  dev2();
+  dev1();
+  //dev2();
 }

@@ -7,9 +7,9 @@ reset
 
 (
 	uncrustify --replace \
-		richard.c \
+		richard*.*
 
 
 find . -name "*.unc-backup*" -type f | xargs -I % unlink %
-rm .v*.dump||true
+  { rm .v*.dump||true; } 2>/dev/null
 ) 

@@ -1,5 +1,6 @@
 #ifndef RICHARD_H
 #define RICHARD_H
+#define TEST_LOG_FILE    "/tmp/vshell.log"
 #include "ansicodes.h"
 #include <time.h>
 
@@ -7,6 +8,37 @@
 #include "../../bash-loadable-wireguard/src/human/bytes.c"
 #include "../../bash-loadable-wireguard/src/log/log.c"
 #include "socket99.c"
+
+
+void  log_file_test(){
+  FILE *fp = fopen(TEST_LOG_FILE, "a");
+
+  log_add_fp(fp, log_get_level());
+  fclose(fp);
+  char *dat;
+
+  dat = file2str(TEST_LOG_FILE);
+  log_info("log file %s size: %s", TEST_LOG_FILE, bytes_to_string(strlen(dat)));
+}
+
+
+char * hostname_to_ip(char *hostname){
+  struct hostent *he;
+  struct in_addr **addr_list;
+  int            i;
+
+  if ((he = gethostbyname(hostname)) == NULL) {
+    herror("gethostbyname");
+    return(NULL);
+  }
+
+  addr_list = (struct in_addr **)he->h_addr_list;
+
+  for (i = 0; addr_list[i] != NULL; i++) {
+    return(inet_ntoa(*addr_list[i]));
+  }
+  return("");
+}
 
 
 int list_func(const int argc, const char **args){

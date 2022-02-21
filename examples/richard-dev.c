@@ -26,9 +26,9 @@ void AbducoHost_connect(AbducoHost ah) {
 int dev2(){
   AbducoHost h1 = DYN(w1, AbducoHost, &(w1){ 0 });
   VCALL_OBJ(h1, connect);
-  /*
   AbducoHost h2 = DYN(w2, AbducoHost, &(w2){ 0 });
   VCALL_OBJ(h2, connect);
+  /*
   AbducoHost h3 = DYN(w3, AbducoHost, &(w3){ 0 });
   VCALL_OBJ(h3, connect);*/
 

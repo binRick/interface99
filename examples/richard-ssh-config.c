@@ -1,23 +1,29 @@
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdlib.h>
 
-int SshConfigOpen(const RemoteHost *rh){
+
+int SshConfigOpen(RemoteHost *rh){
   socket99_result ssh;
-  bool            ok = socket99_open(&(rh->cfg), &ssh);
 
-  if (ok && ssh.fd > 0) {
-    return(ssh.fd);
+  if (socket99_open(&(rh->cfg), &ssh)) {
+    if (ssh.fd > 0) {
+      return(ssh.fd);
+    }
   }
 
   return(-1);
 }
 
 
-bool SshConfigOk(const RemoteHost *rh){
-  socket99_result ssh;
-  bool            ok = socket99_open(&(rh->cfg), &ssh);
+bool SshConfigOk(RemoteHost *rh){
+  int fd = SshConfigOpen(rh);
 
-  if (ok) {
-    close(ssh.fd);
+  if (fd > 0) {
+    if (close(fd) == 0) {
+      return(true);
+    }
   }
-  return(ok);
+  return(false);
 }
 

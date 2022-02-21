@@ -1,4 +1,4 @@
-int PrintRemoteHost(const RemoteHost rh){
+int PrintRemoteHost(RemoteHost rh){
   int fd = SshConfigOpen(&rh);
 
   close(fd);
@@ -14,4 +14,5 @@ int PrintRemoteHost(const RemoteHost rh){
            SshConfigOk(&rh) ? "Yes" : "No",
            fd
            );
+  return(0);
 }

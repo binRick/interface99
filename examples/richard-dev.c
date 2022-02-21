@@ -11,46 +11,7 @@ void AbducoHost_connect(AbducoHost droid) {
   log_debug("Connecting to %s on port %d...", droid.vptr->name(), droid.vptr->port());
 }
 
-
-typedef struct {
-  char dummy;
-} w1;
-
-
-const int w1_port(void) {
-  return(22);
-}
-
-
-const char *w1_name(void) {
-  return("web1.vpnservice.company");
-}
-
-impl(AbducoHost, w1);
-
-typedef struct {
-  char dummy;
-} w2;
-
-
-const int w2_port(void) {
-  return(23);
-}
-
-
-const char *w2_name(void) {
-  return("web1.vpntech.net");
-}
-
-
-void w2_connect(AbducoHost droid) {
-  AbducoHost_connect(droid);
-  puts("Waaaaoow!");
-}
-
-
-#define w2_connect_CUSTOM    ()
-impl(AbducoHost, w2);
+#include "richard-abduco-hosts.c"
 
 
 int dev2(){
@@ -61,6 +22,7 @@ int dev2(){
   AbducoHost h2 = DYN(w2, AbducoHost, &(w2){ 0 });
 
   VCALL_OBJ(h2, connect);
+  return(0);
 }
 
 

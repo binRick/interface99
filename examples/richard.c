@@ -27,7 +27,7 @@
 #include "richard-dev.c"
 
 
-int main(const int argc, const char **argv) {
+int main(){
   log_set_level(LOG_TRACE);
 
 

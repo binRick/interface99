@@ -7,22 +7,22 @@ typedef struct {
 
 
 /*  HOST FXNS */
-const bool w_ok(void) {
+bool w_ok(void) {
   return(false);
 }
 
 
-const bool w1_ok(void) {
+bool w1_ok(void) {
   return(w_ok());
 }
 
 
-const bool w2_ok(void) {
+bool w2_ok(void) {
   return(w_ok());
 }
 
 
-const bool w3_ok(void) {
+bool w3_ok(void) {
   return(true);
 }
 
@@ -32,12 +32,13 @@ const char *w1_name(void) {
 }
 
 
-const int w2_port(AbducoHost ah) {
+int w2_port(AbducoHost ah) {
   return(SSH_PORT + 10);
 }
 
 
-const int w3_port(AbducoHost ah) {
+int w3_port(AbducoHost ah) {
+  log_debug("w3 port>%s", ah.vptr->name());
   return(SSH_PORT + 3);
 }
 
@@ -58,6 +59,7 @@ void w2_connect(AbducoHost ah) {
   log_debug("post-connect>w2 custom connect!");
 }
 
+
 #define w2_connect_CUSTOM    ()
 #define w2_port_CUSTOM       ()
 #define w3_port_CUSTOM       ()
@@ -65,3 +67,4 @@ void w2_connect(AbducoHost ah) {
 impl(AbducoHost, w1);
 impl(AbducoHost, w2);
 impl(AbducoHost, w3);
+

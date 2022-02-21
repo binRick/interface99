@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 project(examples LANGUAGES C)
 
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
-  add_compile_options(-Wall -Wextra -pedantic -ftrack-macro-expansion=0 -I../
+  add_compile_options(-Wall -Wextra -pedantic -Wunused-parameter -ftrack-macro-expansion=0 -I../
                       -fsanitize=address)
   add_link_options(-fsanitize=address)
 elseif(CMAKE_C_COMPILER_ID STREQUAL "Clang")

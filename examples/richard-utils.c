@@ -41,7 +41,7 @@ char * hostname_to_ip(char *hostname){
 }
 
 
-int list_func(const int argc, const char **args){
+int list_func(){
   struct timespec start, end;
 
   return(0);

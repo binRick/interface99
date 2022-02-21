@@ -2,7 +2,7 @@
 #define AbducoHost_IFACE                       \
   vfunc(const char *, name, void)              \
   vfuncDefault(const int, port, AbducoHost ah) \
-  vfuncDefault(const bool, ok, AbducoHost ah)  \
+  vfuncDefault(bool, ok, AbducoHost ah)        \
   vfuncDefault(void, connect, AbducoHost ah)   \
   vfuncDefault(const char *, sessions, AbducoHost ah)
 
@@ -10,7 +10,7 @@ interface(AbducoHost);
 
 
 bool AbducoHost_ok(AbducoHost ah) {
-  log_debug("checking ok on %s", ah.vptr->name());
+  log_debug("checking ok on %s:%d", ah.vptr->name(), ah.vptr->port(ah));
   return(true);
 }
 

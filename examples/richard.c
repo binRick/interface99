@@ -20,6 +20,8 @@
 
 #include "richard-ssh-config.c"
 
+#include "richard-debug.c"
+
 #include "richard-remote-host.c"
 
 #include "richard-dev.c"

@@ -1,3 +1,4 @@
+#include "scriptexec.h"
 
 #define AbducoHost_IFACE                       \
   vfunc(const char *, name, void)              \
@@ -8,6 +9,15 @@
 
 interface(AbducoHost);
 
+#define SshAuth_IFACE                       \
+  vfunc(const char *, name, void)              \
+  vfuncDefault(const int, auth, AbducoHost ah) \
+
+interface(SshAuth);
+
+void init_auth(){
+//  AbducoHost hh = DYN(w1, AbducoHost, &(w1){ 0 });
+}
 
 bool AbducoHost_ok(AbducoHost ah) {
   log_debug("checking ok on %s:%d", ah.vptr->name(), ah.vptr->port(ah));
@@ -39,7 +49,31 @@ void AbducoHost_connect(AbducoHost ah) {
 
 #include "richard-abduco-hosts.c"
 
+struct ScriptExecResult  result;
+struct ScriptExecOptions options;
 
+int dev3(){
+options = scriptexec_create_options();
+char *cmd = "find /etc";
+log_debug(cmd);
+  options.runner            = "sh";
+  options.working_directory = "/";
+  options.exit_on_error     = true;
+  options.print_commands    = false;
+  result                    = scriptexec_run_with_options(cmd, options);
+  if ((int)strlen(result.out) > 0) {
+    result.outs = stringfn_split_lines_and_trim(stringfn_trim(result.out));
+  }
+  if ((int)strlen(result.err) > 0) {
+    result.errs = stringfn_split_lines_and_trim(stringfn_trim(result.err));
+  }
+  log_debug("Code: %d\nOutput:\n%s\nError:\n%s\nDur:%ldms\nstarted:%ld|ended:%ld\n", result.code, result.out, result.err, result.dur, result.start, result.end);
+  log_debug("   out len: %d\n", (int)strlen(result.out));
+  log_debug("   outs qty: %d\n", result.outs.count);
+  log_debug("   err len: %d\n", (int)strlen(result.err));
+  log_debug("   errs qty: %d\n", result.errs.count);
+return 0;
+}
 int dev2(){
   AbducoHost h1 = DYN(w1, AbducoHost, &(w1){ 0 });
 
@@ -58,6 +92,7 @@ int dev2(){
 
 
 int dev1(){
+  return(dev3());
   return(dev2());
 
   RemoteHost web1 = NewRemoteHost("web1.vpnservice.company", SSH_PORT);

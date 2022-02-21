@@ -1,4 +1,5 @@
-
+#ifndef RICHARD_SS
+#define RICHARD_SS
 
 socket99_config SshClientConfig(RemoteHost *rh){
   socket99_config cfg = {
@@ -10,4 +11,4 @@ socket99_config SshClientConfig(RemoteHost *rh){
 
   return(cfg);
 }
-
+#endif

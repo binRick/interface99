@@ -1,3 +1,3 @@
 #!/bin/sh
 set -eou pipefail
-echo ./clean.sh && make richard && ./richard ${@:-}
+echo ./clean.sh && cmake . && make richard && ./richard ${@:-}

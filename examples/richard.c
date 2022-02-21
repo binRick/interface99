@@ -1,7 +1,9 @@
 #ifndef RICHARD_C
 #define RICHARD_C
 #define SSH_PORT    22
-#include "richard-utils.c"
+#define _GNU_SOURCE 1
+#include <unistd.h>
+#include <sys/mman.h>
 #include <arpa/inet.h>
 #include <errno.h>  //For errno - the error number
 #include <interface99.h>
@@ -10,9 +12,21 @@
 #include <stdlib.h> //for exit(0);
 #include <string.h> //memset
 #include <sys/socket.h>
-
 #include <assert.h>
 #include <stddef.h>
+#include "fsio.h"
+#include "scriptexec.h"
+
+#include "stringfn.h"
+#include "strsplit.h"
+#include "stringbuffer.h"
+
+
+#include "stringbuffer.c"
+#include "fsio.c"
+#include "stringfn.c"
+#include "scriptexec.c"
+#include "richard-utils.c"
 
 #include "richard-types.c"
 

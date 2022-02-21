@@ -1,4 +1,7 @@
+#ifndef RICHARD_RH
+#define RICHARD_RH
 
+socket99_config SshClientConfig(RemoteHost*);
 
 RemoteHost NewRemoteHost(char *name, int port){
   char ip[100];
@@ -11,11 +14,16 @@ RemoteHost NewRemoteHost(char *name, int port){
   RemoteHost rh = {
     .name     = name,
     .cfg      = NULL,
+//(RemoteHost*)void,
     .ok       = false,
     .ssh_port = SSH_PORT
   };
 
-  rh.cfg = SshClientConfig(&rh);
+//socket99_config cfg;
+socket99_config cfg = SshClientConfig(&rh);
+  rh.cfg = cfg;
 
   return(rh);
 }
+
+#endif

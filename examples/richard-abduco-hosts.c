@@ -27,23 +27,18 @@ const bool w3_ok(void) {
 }
 
 
-const int w1_port(void) {
-  return(SSH_PORT);
-}
-
-
 const char *w1_name(void) {
   return("web1.vpnservice.company");
 }
 
 
-const int w2_port(void) {
-  return(SSH_PORT);
+const int w2_port(AbducoHost ah) {
+  return(SSH_PORT + 10);
 }
 
 
-const int w3_port(void) {
-  return(SSH_PORT);
+const int w3_port(AbducoHost ah) {
+  return(SSH_PORT + 3);
 }
 
 
@@ -57,29 +52,16 @@ const char *w2_name(void) {
 }
 
 
-void w1_connect(AbducoHost ah) {
-  log_debug("pre-connect>w1 custom connect!");
-  AbducoHost_connect(ah);
-  log_debug("post-connect>w1 custom connect!");
-}
-
-
 void w2_connect(AbducoHost ah) {
   log_debug("pre-connect>w2 custom connect!");
   AbducoHost_connect(ah);
   log_debug("post-connect>w2 custom connect!");
 }
 
-
-void w3_connect(AbducoHost ah) {
-  log_debug("pre-connect>w3 custom connect!");
-  AbducoHost_connect(ah);
-  log_debug("post-connect>w3 custom connect!");
-}
-
-#define w1_connect_CUSTOM    ()
-impl(AbducoHost, w1);
 #define w2_connect_CUSTOM    ()
+#define w2_port_CUSTOM       ()
+#define w3_port_CUSTOM       ()
+
+impl(AbducoHost, w1);
 impl(AbducoHost, w2);
-#define w3_connect_CUSTOM    ()
 impl(AbducoHost, w3);

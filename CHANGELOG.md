@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## unreleased
 
+## 0.8.4 - 2022-03-17
+
+### Added
+
+ - `DYN_LIT` that constructs interface objects out of compound literals.
+
 ## 0.8.3 - 2021-12-09
 
 ### Fixed

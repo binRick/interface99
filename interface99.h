@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2021 Hirrolot
+Copyright (c) 2021-2022 Hirrolot
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -48,8 +48,9 @@ SOFTWARE.
 #define VCALL_SUPER(obj, superiface, ...)     VCALL_SUPER99(obj, superiface, __VA_ARGS__)
 #define VCALL_SUPER_OBJ(obj, superiface, ...) VCALL_SUPER_OBJ99(obj, superiface, __VA_ARGS__)
 
-#define DYN(implementer, iface, ...) DYN99(implementer, iface, __VA_ARGS__)
-#define VTABLE(implementer, iface)   VTABLE99(implementer, iface)
+#define DYN(implementer, iface, ...)     DYN99(implementer, iface, __VA_ARGS__)
+#define DYN_LIT(implementer, iface, ...) DYN_LIT99(implementer, iface, __VA_ARGS__)
+#define VTABLE(implementer, iface)       VTABLE99(implementer, iface)
 
 #define VSelf    VSelf99
 #define VSELF(T) VSELF99(T)
@@ -74,14 +75,15 @@ SOFTWARE.
 
 #define DYN99(implementer, iface, ...)                                                             \
     ((iface){.self = (void *)(__VA_ARGS__), .vptr = &VTABLE99(implementer, iface)})
-#define VTABLE99(implementer, iface) ML99_CAT4(implementer, _, iface, _impl)
+#define DYN_LIT99(implementer, iface, ...) DYN99(implementer, iface, &(implementer)__VA_ARGS__)
+#define VTABLE99(implementer, iface)       ML99_CAT4(implementer, _, iface, _impl)
 
 #define VSelf99    void *restrict iface99_self
 #define VSELF99(T) T *restrict self = (T * restrict)(iface99_self)
 
 #define IFACE99_MAJOR 0
 #define IFACE99_MINOR 8
-#define IFACE99_PATCH 3
+#define IFACE99_PATCH 4
 // } (Public stuff)
 
 // Interface generation {

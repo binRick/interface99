@@ -109,8 +109,8 @@ void test(Shape shape) {
 }
 
 int main(void) {
-    Shape r = DYN(Rectangle, Shape, &(Rectangle){.a = 5, .b = 7});
-    Shape t = DYN(Triangle, Shape, &(Triangle){.a = 10, .b = 20, .c = 30});
+    Shape r = DYN_LIT(Rectangle, Shape, {5, 7});
+    Shape t = DYN_LIT(Triangle, Shape, {10, 20, 30});
 
     test(r);
     test(t);
@@ -132,8 +132,8 @@ int main(void) {
 ```
 perim = 24
 perim = 120
-perim = 6
-perim = 30
+perim = 60
+perim = 300
 ```
 
 </details>
@@ -286,14 +286,14 @@ void Rectangle_scale(VSelf, int factor) {
 
 Once an interface and its implementations are both generated, it is time to instantiate an interface object and invoke some functions upon it.
 
-First of all, to instantiate `Shape`, use the [`DYN`](#DYN) macro:
+First of all, to instantiate `Shape`, use the [`DYN_LIT`](#DYN_LIT) macro:
 
 ```с
-Shape r = DYN(Rectangle, Shape, &(Rectangle){.a = 5, .b = 7});
+Shape r = DYN_LIT(Rectangle, Shape, {5, 7});
 test(r);
 ```
 
-Here, `DYN(Rectangle, Shape, &(Rectangle){.a = 5, .b = 7})` creates `Shape` by assigning `Shape.self` to `&(Rectangle){.a = 5, .b = 7}` and `Shape.vptr` to the aforementioned `&Rectangle_Shape_impl`. Eventually, since `Shape` is polymorphic over its implementations, you can accept `shape` as a function parameter and perform dynamic dispatch through the [`VCALL`](#vcall_) macro:
+Here, `DYN_LIT(Rectangle, Shape, {5, 7})` creates `Shape` by assigning `Shape.self` to `&(Rectangle){5, 7}` and `Shape.vptr` to the aforementioned `&Rectangle_Shape_impl`. Eventually, you can accept `Shape` as a function parameter and perform dynamic dispatch through the [`VCALL`](#vcall_) macro:
 
 ```c
 void test(Shape shape) {
@@ -306,7 +306,8 @@ void test(Shape shape) {
 Finally, just a few brief notes:
 
  - Besides `VCALL`, you also have `VCALL_OBJ`, `VCALL_SUPER`, and `VCALL_SUPER_OBJ`. They all serve a different purpose; for more information, please refer to [their documentation](#vcall_).
- - Remember that your virtual function can accept literally any parameters, even without `self`, so you can invoke them as `obj.vptr->foo(...)` as well.
+ - In practice, [`DYN`](#DYN) is used more often than [`DYN_LIT`](#DYN_LIT); it just accepts an ordinary pointer instead of an initialiser list, which means that you can `malloc` it beforehand.
+ - If your virtual function does not accept `self`, you can invoke it as `obj.vptr->foo(...)`.
  - If you want to call an interface function on some concrete type, just write `VTABLE(T, Iface).foo(...)`.
 
 Congratulations, this is all you need to know to write most of the stuff!
@@ -336,7 +337,7 @@ interface(Airplane);
 Here, `Airplane` extends `Vehicle` with the new functions `move_up` and `move_down`. Everywhere you have `Airplane`, you can also operate `Vehicle`:
 
 ```c
-Airplane my_airplane = DYN(MyAirplane, Airplane, &(MyAirplane){0, 0});
+Airplane my_airplane = DYN_LIT(MyAirplane, Airplane, {.x = 0, .y = 0});
 
 VCALL_SUPER(my_airplane, Vehicle, move_forward, 10);
 VCALL_SUPER(my_airplane, Vehicle, move_back, 3);
@@ -434,8 +435,9 @@ Having a well-defined semantics of the macros, you can write an FFI which is qui
 <declImplExtern>  ::= "declImplExtern(" <iface> "," <implementer> ")" ;
 <implementer>     ::= <ident> ;
 
-<dyn>             ::= "DYN("    <implementer> "," <iface> "," <ptr> ")" ;
-<vtable>          ::= "VTABLE(" <implementer> "," <iface> ")" ;
+<dyn>             ::= "DYN("     <implementer> "," <iface> "," <ptr> ")" ;
+<dyn-lit>         ::= "DYN_LIT(" <implementer> "," <iface> "," "{" <initializer-list> "}" ")" ;
+<vtable>          ::= "VTABLE("  <implementer> "," <iface> ")" ;
 
 <vself-params>    ::= "VSelf" ;
 <vself-cast>      ::= "VSELF(" <type> ")" ;
@@ -543,6 +545,12 @@ The same as [`declImpl`](#declImpl) but generates an `extern` declaration instea
 Expands to an expression of type `<iface>`, with `.self` initialised to `<ptr>` and `.vptr` initialised to `&VTABLE(<implementer>, <iface>)`.
 
 `<ptr>` is guaranteed to be evaluated only once.
+
+#### `DYN_LIT`
+
+`DYN_LIT(<implementer>, <iface>, ...)` expands to `DYN(<implementer>, <iface>, &(<implementer>)...)`. The `...` must take the form of an initialiser list in [compound literals].
+
+[compound literals]: https://en.cppreference.com/w/c/language/compound_literal
 
 #### `VTABLE`
 
@@ -660,7 +668,7 @@ Thanks to Rust and Golang for their implementations of traits/interfaces.
 
 ## Publications
 
- - [_Comparing Rust and Interface99_](https://www.reddit.com/r/ProgrammingLanguages/comments/q40om0/comparing_interfaces_rust_and_interface99/) by Hirrolot.
+ - [_Comparing Golang and Interface99_](https://www.reddit.com/r/C_Programming/comments/tgm5ft/comparing_golang_and_interface99/) by Hirrolot.
  - [_What’s the Point of the C Preprocessor, Actually?_](https://hirrolot.github.io/posts/whats-the-point-of-the-c-preprocessor-actually.html) by Hirrolot.
  - [_Macros on Steroids, Or: How Can Pure C Benefit From Metaprogramming_](https://hirrolot.github.io/posts/macros-on-steroids-or-how-can-pure-c-benefit-from-metaprogramming.html) by Hirrolot.
  - [_Extend Your Language, Don’t Alter It_](https://hirrolot.github.io/posts/extend-your-language-dont-alter-it.html) by Hirrolot.
